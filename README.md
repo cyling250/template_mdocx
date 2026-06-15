@@ -1,76 +1,91 @@
-# template_mdocx
+# template_mdocx · 写 Markdown，出 Word
+
+> **让 template_mdocx 把你从重复而繁杂的排版中解放出来，你只管专注于内容。**
+
+把写作变成聊天——你对 AI 说人话，AI 输出 Markdown，本工具一键导出为格式完美的 Word 文档。
 
 **版本**: 0.1.0
 
-一个基于 [Model Context Protocol (MCP)](https://modelcontextprotocol.io) 的服务，将 **扩展 Markdown** 内容转换为格式完整的 **Word (.docx)** 学术论文。内置华中科技大学（HUST）博士论文模板支持，生成符合学校格式要求的论文文档。
+### 不止是论文
 
-## 效果展示
+本 MCP 服务的核心能力是 **Markdown + Word 模板 → 格式化文档**。虽然当前以华科博士论文作为测试基准，但只要你的 Word 模板样式命名清晰、排版不过于复杂（非双栏、非复杂图文混排），几乎任何规范性文档都能无缝适配：
+
+| 文档类型        | 关键元素                                       | 适用度 |
+| --------------- | ---------------------------------------------- | ------ |
+| 学位论文        | 章节标题、三线表、公式编号、交叉引用、参考文献 | 完美   |
+| 项目报告        | 标题层级、图表、公式、引用                     | 完美   |
+| 公文 / 红头文件 | 标题、段落、编号、落款                         | 良好   |
+| 技术手册        | 多级标题、表格、代码块                         | 良好   |
+| 申报材料        | 表格、段落、编号列表                           | 良好   |
+| 规章制度        | 条款编号、层级标题                             | 良好   |
+
+> 只要你的 Word 模板有规范样式名，MCP 就能匹配上。换个模板就是换种文档类型。
+
+### 诚邀 Fork 共建
+
+学术论文只是冰山一角。如果你有项目报告模板、公文模板、申报材料模板……欢迎 **Fork 本项目**，参考 `hust_thesis/` 的设计范式，用 **Vibecoding** 填充属于你自己领域的新模板。把话告诉 AI，让它帮你适配——就跟配 MCP 服务一样简单。大家一起把"写 Markdown 出 Word"这件事覆盖到更多场景。
+
+---
+
+## 效果一览
 
 ![生成效果](docs/image.png)
 
-## 功能特性
+---
 
-- **扩展 Markdown 解析** — 在标准 Markdown 基础上扩展了图片、表格、公式、交叉引用、文献引用等学术写作要素
-- **自动编号** — 图题注、表题注、公式编号、章节编号均由 Word 域代码驱动，支持自动更新
-- **三线表** — 自动生成学术论文标准三线表
-- **公式支持** — 行内公式（`$...$`）和块公式（`$$...$$`）均使用 Word OMath 格式，可在 Word 中编辑
-- **交叉引用** — `@ref{标签}` 语法引用图、表、公式，生成 Word 交叉引用域
-- **文献引用** — 支持 BibTeX 格式文献库，自动生成 GB/T 7714 格式参考文献列表，引用标记为右上角上标格式
-- **MCP 协议** — 通过标准 MCP stdio 传输，可集成到任何支持 MCP 的 AI 客户端（如 Claude Desktop、Cursor 等）
+## 不会配环境？把这段话丢给你的 AI
 
-> **模板可定制**：标题样式映射和参考文献格式均可自由更改，方便适配其他 Word 模板。作者作为华科校友，使用华科博士论文模板作为测试基准。
+你不需要自己动手安装和配置。直接打开 **Cursor / Claude Desktop / 任何支持 MCP 的 AI 工具**，把下面这段话粘贴给它，它会帮你自动完成下载、安装、配置全部流程：
 
-## 架构
+---
 
-```
-template_mdocx/
-├── server.py               ★ MCP 服务入口，暴露三个工具
-├── build.py                  开发辅助脚本，用于本地测试生成
-├── pyproject.toml             uv 项目配置与依赖声明
-├── docs/                     示例文件（BibTeX 文献库、Markdown 论文、效果图）
-│
-├── common/                   模板无关的 Word 格式化工具集
-│   ├── parser.py             MD + BIB 文本解析器
-│   ├── utils.py              XML、OMath、字体、边框辅助函数
-│   ├── crossref.py           Word 域代码（STYLEREF、SEQ、REF）、书签、题注
-│   ├── figures.py            图片嵌入 + 题注
-│   ├── tables.py             三线表生成 + 题注
-│   ├── formulas.py           块公式（三列无边框表格）+ 编号
-│   └── references.py         BibTeX 解析、格式化器接口、参考文献渲染
-│
-└── hust_thesis/              HUST 特定论文模块
-    ├── generator.py          论文生成主流程（解析 → 校验 → 渲染 → 保存）
-    ├── formatters.py         文献格式化器（GB/T 7714）和引用格式化器（上标）
-    └── template.docx         默认 HUST 博士论文 Word 模板
-```
+> 帮我安装 template_mdocx 这个 MCP 服务，仓库地址是 https://github.com/cyling250/template_mdocx。请按以下步骤操作：\
+>
+> 1. 把仓库 clone 到本地\
+> 2. 确保电脑装了 Python 3.12+ 和 uv 包管理器\
+> 3. 进入项目目录，运行 `uv sync` 安装依赖\
+> 4. 把这个 MCP 服务配置到我当前使用的 AI 客户端里（如果是 Cursor 就配到 Cursor，如果是 Claude Desktop 就配到 Claude Desktop），配置内容如下：\
+>
+> ````json\
+> {\
+>   "mcpServers": {\
+>     "template_mdocx": {\
+>       "command": "uv",\
+>       "args": ["run", "--directory", "项目所在路径", "server.py"]\
+>     }\
+>   }\
+> }\
+> ```\
+> 5. 安装完成后，跟我说一声，并告诉我接下来怎么用它写论文。
+> ````
 
-## 快速开始
+---
 
-### 环境要求
+就这一句话，AI 帮你配好一切。配完之后你就能直接对话生成论文了。
 
-- Python >= 3.12
-- [uv](https://docs.astral.sh/uv/)（包管理器）
+---
 
-### 安装
+## 它能做什么？
 
-```bash
-cd template_mdocx
-uv sync
-```
+| 你做的事                   | 效果                     |
+| -------------------------- | ------------------------ |
+| 跟 AI 聊天，写出论文内容   | —                        |
+| AI 按约定格式输出 Markdown | —                        |
+| 一键调用本工具             | 输出格式完整的 Word 论文 |
+| 在 Word 中运行一个宏       | 所有公式渲染完成         |
+| `Ctrl+A` 然后 `F9`         | 编号、引用全部更新       |
 
-### 本地测试
+生成的 Word 包含：**自动编号的标题、三线表格、公式编号、图题注、交叉引用、GB/T 7714 参考文献、`[1-3,5]` 风格上标引用**。
 
-```bash
-uv run build.py
-```
+---
 
-此命令读取 `docs/test_coverage.md` 和 `docs/refs.bib`，生成 `docs/test_output.docx`。
+## 生成后还有两件小事
 
-### 生成后操作（重要）
+生成的 `.docx` 用 Word 打开后，还有两个步骤（30 秒搞定）：
 
-生成的 `.docx` 文件还需要在 Word 中完成两步手动操作：
+### 第一步：公式渲染
 
-**第一步 — 渲染公式**：按 `Alt + F11` 打开 VBA 编辑器，`Insert → Module`，粘贴以下代码并运行（`F5`）：
+按 `Alt+F11` → `插入` → `模块`，粘贴这段代码，按 `F5` 运行：
 
 ```vba
 Sub ConvertAllEquations()
@@ -80,162 +95,151 @@ Sub ConvertAllEquations()
         eq.BuildUp
         On Error GoTo 0
     Next
-    MsgBox "公式转换完成。", vbInformation
+    MsgBox "公式转换完成！", vbInformation
 End Sub
 ```
 
-**第二步 — 更新域**：`Ctrl + A` 全选，然后按 `F9` 更新所有域（编号、交叉引用等）。
+### 第二步：刷新编号
 
-> 提示：如果模板 `.docx` 的 VBA 宏功能被禁用，可以将模板另存为 `.dotm` 格式并启用宏。
+`Ctrl+A` 全选，然后按 `F9`。所有图、表、公式、参考文献的编号和交叉引用就都刷好了。
 
-## MCP 集成
+---
 
-本服务使用 **stdio 传输**，可集成到任何支持 MCP 的客户端中。
+## 模板可以换吗？可以！
 
-### Claude Desktop 配置
+虽然内置的是华科博士论文模板（作者是华科学生），但你完全可以换成自己的模板：
 
-在 Claude Desktop 的 MCP 配置文件中添加：
+- 把样式名从 `Heading 1` 改成 `标题 1`，从 `Caption` 改成 `题注`……改几行配置就行
+- 参考文献格式也可以改：从 GB/T 7714 换成 APA、MLA，或者你自定义的格式
+- 具体改法看下面「二次开发」部分，或者直接告诉 AI：「帮我把华科的样式映射改成北航的」
 
-**Windows (`%AppData%\Claude\claude_desktop_config.json`)**:
+---
 
-```json
-{
-  "mcpServers": {
-    "template_mdocx": {
-      "command": "uv",
-      "args": ["run", "--directory", "F:\\template_mdocx", "server.py"]
-    }
-  }
-}
-```
+## 手把手配置参考（如果你想自己来）
 
-**macOS / Linux (`~/.config/Claude/claude_desktop_config.json`)**:
+### Claude Desktop
+
+**Windows** (`%AppData%\Claude\claude_desktop_config.json`)：
 
 ```json
 {
   "mcpServers": {
     "template_mdocx": {
       "command": "uv",
-      "args": ["run", "--directory", "/path/to/template_mdocx", "server.py"]
+      "args": [
+        "run",
+        "--directory",
+        "F:\\你的路径\\template_mdocx",
+        "server.py"
+      ]
     }
   }
 }
 ```
 
-### Cursor 配置
+**macOS / Linux** (`~/.config/Claude/claude_desktop_config.json`)：
 
 ```json
 {
   "mcpServers": {
     "template_mdocx": {
       "command": "uv",
-      "args": ["run", "--directory", "F:\\template_mdocx", "server.py"]
+      "args": ["run", "--directory", "/你的路径/template_mdocx", "server.py"]
     }
   }
 }
 ```
 
-## MCP 工具说明
+### Cursor
 
-### `help_md`
+```json
+{
+  "mcpServers": {
+    "template_mdocx": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "F:\\你的路径\\template_mdocx",
+        "server.py"
+      ]
+    }
+  }
+}
+```
 
-返回扩展 Markdown 语法完整参考。生成论文前先调用此工具获取语法说明。
+### 手动安装
 
-- **输入**: 无
+```bash
+# 1. 克隆仓库
+git clone https://github.com/cyling250/template_mdocx
+cd template_mdocx
 
-### `example`
+# 2. 安装依赖（需要 Python 3.12+ 和 uv）
+uv sync
 
-返回示例 BibTeX 文献库（`refs.bib`）和示例 Markdown 论文内容（`test_coverage.md`）。
+# 3. 测试一下
+uv run build.py
+```
 
-- **输入**: 无
+---
 
-### `generate_hust_thesis`
+## Markdown 写作规范
 
-核心工具：将扩展 Markdown 内容生成为格式化 Word 论文。
-
-| 参数            | 类型   | 必填 | 说明                           |
-| --------------- | ------ | ---- | ------------------------------ |
-| `md_content`    | string | 是   | 扩展 Markdown 格式的论文内容   |
-| `template_path` | string | 是   | Word 模板文件（.docx）的路径   |
-| `output_path`   | string | 否   | 输出文件路径，不指定则自动生成 |
-| `bib_path`      | string | 否   | BibTeX 文献库文件（.bib）路径  |
-
-## 扩展 Markdown 语法
+跟 AI 说"按下面格式写论文"，它输出的内容就能直接转换：
 
 ### 标题
 
 ```
-# 一级标题（通常对应论文第 X 章）
+# 一级标题（第 X 章）
 ## 二级标题
 ### 三级标题
 #### 四级标题
 ```
 
-### 行内格式
-
-| 语法           | 效果                   |
-| -------------- | ---------------------- |
-| `**粗体文字**` | **粗体文字**           |
-| `*斜体文字*`   | _斜体文字_             |
-| `$E=mc^2$`     | 行内公式（Word OMath） |
-
-### 图片
+### 粗体 / 斜体 / 行内公式
 
 ```
-@figure[fig:标签]{图片描述文字}
-![替代文本](图片路径)
+**粗体**    *斜体*    $E=mc^2$
 ```
 
-- `@figure` 声明图片标签和题注文字
-- 紧随其后的 `![...](...)` 指定图片路径
-- 支持相对路径和绝对路径
+### 插图
+
+```
+@figure[fig:arch]{模型架构图}
+![替代文字](图片路径.png)
+```
 
 ### 表格
 
 ```
-@table[tbl:标签]{表格名称}
-| 列1 | 列2 | 列3 |
+@table[tbl:compare]{不同方法性能对比}
+| 方法 | 准确率 | 参数量 |
 | --- | --- | --- |
-| 数据 | 数据 | 数据 |
+| ResNet | 76.1% | 25.6M |
+| 本文方法 | 78.5% | 32.1M |
 ```
-
-- `@table` 声明表格标签和名称
-- 紧随其后的 Markdown 表格将被转换为三线表
-- 表格名称自动编号为"表 X-Y"
 
 ### 块公式
 
 ```
-@formula[eq:标签]
+@formula[eq:loss]
 $$
-公式内容
+\mathcal{L} = \frac{1}{N} \sum (y - \hat{y})^2
 $$
 ```
-
-- `@formula` 声明公式标签
-- `$$...$$` 包围 LaTeX 公式内容
-- 公式自动编号为"(X-Y)"，右对齐
 
 ### 交叉引用
 
 ```
-@ref{fig:架构图}
-@ref{tbl:对比表}
-@ref{eq:损失函数}
+如@ref{fig:arch}所示……结果见@ref{tbl:compare}……目标函数见@ref{eq:loss}。
 ```
 
-- `@ref{标签}` 引用已声明的图、表或公式
-- 生成 Word 交叉引用域，可自动更新编号
-
-### 文献引用
+### 参考文献引用
 
 ```
-正文中引用 @cite{key1,key2}
+相关研究@cite{resnet2016,transformer2017}表明……
 ```
-
-- `@cite{key1,key2}` 在正文中引用文献
-- 多个文献用逗号分隔，自动格式化为 `[1-3,5]` 风格
-- 引用显示为右上角上标
 
 ### 参考文献列表
 
@@ -243,177 +247,82 @@ $$
 @bibliography{refs.bib}
 ```
 
-- 在文末插入参考文献列表
-- 参数为 BibTeX 文件路径
-- 自动生成 GB/T 7714 格式的参考文献列表
+### 四条铁律
 
-### 语法规则
-
-1. 每个表格和图片必须有 `@table` / `@figure` 声明（含标签和名称）
-2. 每个块公式必须有 `@formula` 声明
-3. 交叉引用 `@ref{标签}` 的标签必须与声明的标签一致
-4. 文献引用 `@cite{key}` 的 key 必须存在于 BIB 文件中
-
-## 使用 AI 生成 Markdown 论文文档
-
-将此提示词发送给 AI（Claude、ChatGPT 等），即可生成符合本服务解析要求的 Markdown 论文内容：
+1. 每个图、表必须有 `@figure[标签]{描述}` / `@table[标签]{表名}` 声明
+2. 每个块公式必须有 `@formula[标签]` 声明
+3. `@ref{标签}` 的标签必须和声明的一致
+4. `@cite{key}` 的 key 必须存在于 `.bib` 文件中
 
 ---
 
+## 让 AI 帮你写论文的提示词
+
+把这段话发给 AI，它就会按上述规范写论文：
+
 ```
-你是一名学术论文撰写助手。请根据我的要求，生成一篇用扩展 Markdown 格式编写的学术论文。
+你是一名学术论文撰写助手。请用扩展 Markdown 格式撰写学术论文，严格遵守以下规则：
 
-## 语法规则（必须严格遵守）
+【语法规则】
+- 标题：#、##、###、####（# 对应"第X章"）
+- 粗体/斜体：**粗体** / *斜体*
+- 行内公式：$LaTeX$
+- 图片：@figure[fig:标签]{图注} 后紧接 ![alt](路径)
+- 表格：@table[tbl:标签]{表名} 后紧接 Markdown 表格
+- 块公式：@formula[eq:标签] 后紧接 $$...$$
+- 交叉引用：@ref{标签}（引 fig/tbl/eq）
+- 文献引用：@cite{key1,key2}
+- 文献列表：@bibliography{文件名.bib}
 
-1. **标题**：使用 #、##、###、#### 表示一至四级标题。# 对应"第X章"级别。
-2. **粗体/斜体**：**粗体** / *斜体*。
-3. **行内公式**：$LaTeX公式$。
-4. **图片**：@figure[fig:标签]{图注描述} 后紧跟 ![alt](图片路径)。
-5. **表格**：@table[tbl:标签]{表格名称} 后紧跟 Markdown 表格（三线表）。
-6. **块公式**：@formula[eq:标签] 后紧跟 $$...$$。
-7. **交叉引用**：@ref{标签}，标签须与 @figure/@table/@formula 中声明的标签一致。
-8. **文献引用**：@cite{key1,key2}，key 须存在于 BIB 文件中。
-9. **参考文献列表**：@bibliography{bib文件名.bib}。
+【标签前缀约定】
+fig: 图片 / tbl: 表格 / eq: 公式
 
-## 对应关系说明
-
-- fig 前缀用于图片（@figure[fig:xxx]）
-- tbl 前缀用于表格（@table[tbl:xxx]）
-- eq 前缀用于公式（@formula[eq:xxx]）
-- @ref{fig:xxx} / @ref{tbl:xxx} / @ref{eq:xxx} 分别引用上述对象
-
-## 请按以下步骤生成
-
-1. 先确定论文标题和章节结构
-2. 逐节撰写内容，每章一级标题后表格和公式编号会重新计数
-3. 确保每个 @figure/@table/@formula 声明都有唯一的标签
-4. 确保 @ref 引用的标签都已声明
-5. 确保 @cite 引用的文献 key 与 BIB 文件中的一致
-
-## 参考示例
-
-@figure[fig:arch]{模型架构图}
-![architecture](images/model.png)
-
-如@ref{fig:arch}所示，本文提出的架构包含三个模块...
-
-@table[tbl:compare]{不同方法性能对比}
-| 方法 | 准确率 | 参数量 |
-| --- | --- | --- |
-| ResNet | 76.1% | 25.6M |
-| 本文方法 | 78.5% | 32.1M |
-
-实验结果如@ref{tbl:compare}所示。优化目标为：
-
-@formula[eq:opt]
-$$
-L = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
-$$
-
-相关研究@cite{resnet2016,transformer2017}表明，深度学习方法效果显著。
-
-@bibliography{refs.bib}
+【生成要求】
+1. 先确定章节结构
+2. 逐节撰写，确保 @figure/@table/@formula 标签唯一
+3. @ref 引用必须能在文中找到声明
+4. @cite 的 key 必须与 BIB 文件一致
 ```
 
 ---
 
-> 只要 MD 文档严格按照上述语法编写，一键转换即可产出高质量 Word 论文。
+## 二次开发：适配你自己的模板
 
-## 开发指南
+这个项目是**模板无关**的——华科的模板只是一个示例。你可以用 Vibecoding 的方式适配任何学校的论文模板。
 
-### 项目设置
+**把这个需求告诉 AI 就行：**
 
-```bash
-git clone <repo-url>
-cd template_mdocx
-uv sync
-```
+> 帮我基于 template_mdocx 适配一个新模板。我的学校是 XX 大学，Word 模板文件在 `my_template.docx`，里面用到的样式名如下：正文用 `Normal`，标题用 `标题1`、`标题2`，题注用 `题注`，参考文献用 `参考文献`。请参考 `hust_thesis/` 目录下的实现方式，帮我创建一个 `my_univ/` 模块。
 
-### Vibecoding 二次开发 — 适配你自己的模板
-
-本项目采用**模板无关**架构，适配新模板只需三步：
-
-**1. 创建新模板模块**
-
-```bash
-mkdir my_university
-touch my_university/__init__.py
-touch my_university/generator.py
-touch my_university/formatters.py
-```
-
-**2. 实现生成器和格式化器**
-
-参考 [hust_thesis/generator.py](hust_thesis/generator.py) 的实现：
+核心要改的只是 [generator.py](hust_thesis/generator.py) 里的样式映射：
 
 ```python
-# my_university/generator.py
-# 核心：定义样式映射 + 编排渲染逻辑
 _STYLE_MAP = {
-    "body": "Normal",
-    "heading_1": "正文",
-    "heading_2": "标题 2",
-    "caption": "题注",
-    "bibliography": "参考文献",
+    "body": "Normal",        # ← 改成你模板里的正文样式名
+    "heading_1": "Heading 1", # ← 改成你模板里的一级标题样式名
+    "heading_2": "Heading 2",
+    "caption": "Caption",
+    "bibliography": "Bibliography",
 }
-_TABLE_CELL_STYLE = "表格正文"
 ```
 
-参考 [hust_thesis/formatters.py](hust_thesis/formatters.py) 实现文献格式：
-
-```python
-# my_university/formatters.py
-class MyBibFormatter(BibFormatter):
-    def format(self, entry):
-        # 实现你的参考文献格式（APA / MLA / 自定义）
-        ...
-```
-
-**3. 在 server.py 中注册新工具**
-
-```python
-from my_university import generate_thesis as gen_my
-
-@server.call_tool()
-async def handle_call_tool(name, arguments):
-    if name == "generate_my_thesis":
-        return await _gen(args, gen_my)
-```
-
-Vibecoding 开发时，可以用自然语言描述需求让 AI 完成上述代码，参考华科模板的实现作为范例。
-
-### 构建测试
-
-```bash
-uv run build.py
-```
-
-### 代码结构
+### 项目结构速览
 
 ```
-common/          # 核心库，模板无关
-  ├── parser.py       — 文本解析层
-  ├── figures.py      — 图片处理
-  ├── tables.py       — 表格处理
-  ├── formulas.py     — 公式处理
-  ├── references.py   — 文献处理
-  ├── crossref.py     — 交叉引用
-  └── utils.py        — 通用工具
-
-hust_thesis/     # HUST 模板实现（供二次开发参考）
-  ├── generator.py    — 论文生成主流程
-  ├── formatters.py   — 文献格式化
-  └── template.docx   — Word 模板文件
+common/          ← 核心引擎，不碰它
+hust_thesis/     ← 华科模板（你的模板也照这个写）
+  ├── generator.py    ← 样式映射 + 生成逻辑
+  ├── formatters.py   ← 参考文献格式
+  └── template.docx   ← Word 模板文件
 ```
 
-## 依赖
+---
 
-| 包                                                   | 版本     | 用途                            |
-| ---------------------------------------------------- | -------- | ------------------------------- |
-| [mcp](https://pypi.org/project/mcp/)                 | >= 1.0.0 | Model Context Protocol 服务框架 |
-| [python-docx](https://pypi.org/project/python-docx/) | >= 1.1.0 | Word 文档读写                   |
-| [lxml](https://pypi.org/project/lxml/)               | >= 5.0.0 | XML 处理（python-docx 依赖）    |
+## 环境要求
+
+- Python >= 3.12
+- [uv](https://docs.astral.sh/uv/)（一行命令安装：`pip install uv`）
 
 ## 许可证
 
-MIT
+Apache-2.0
