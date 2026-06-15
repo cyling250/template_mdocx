@@ -1,0 +1,15 @@
+[project]
+name = "template_mdocx"
+version = "0.1.0"
+description = "将扩展 Markdown 内容转换为格式完整的 Word (.docx) 学术论文"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "template_mdocx contributors" },
+]
+license = { text = "MIT" }
+dependencies = [
+    "lxml>=6.1.1",
+    "mcp>=1.27.2",
+    "python-docx>=1.2.0",
+]
