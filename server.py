@@ -72,13 +72,12 @@ async def handle_list_tools() -> list[types.Tool]:
 
 @server.call_tool()
 async def handle_call_tool(name: str, arguments: dict | None) -> list[types.TextContent]:
-    if not arguments:
-        raise ValueError("缺少参数")
+    args = arguments or {}
     try:
         if name == "help_md":                return await _help_md()
         elif name == "example":              return await _example()
-        elif name == "generate_hust_thesis": return await _gen(arguments)
-        elif name == "docx_to_md":           return await _d2m(arguments)
+        elif name == "generate_hust_thesis": return await _gen(args)
+        elif name == "docx_to_md":           return await _d2m(args)
         else: raise ValueError(f"未知工具: {name}")
     except Exception as e:
         logger.exception(f"工具 {name} 失败")
