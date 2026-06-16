@@ -9,6 +9,7 @@ from mcp.server.stdio import stdio_server
 import mcp.types as types
 
 from hust_thesis import generate_thesis
+from utils import docx_to_md
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("template_mdocx")
@@ -51,6 +52,19 @@ async def handle_list_tools() -> list[types.Tool]:
                 "required": ["md_content", "template_path"],
             },
         ),
+        types.Tool(
+            name="docx_to_md",
+            description="将 .docx 文档转换为 Markdown（无需格式参考，自动提取标题、表格、图片、公式、题注）。",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "docx_path":  {"type": "string", "description": "输入 .docx 文件路径"},
+                    "output_md":  {"type": "string", "description": "输出 .md 文件路径"},
+                    "image_dir_name": {"type": "string", "description": "图片目录名称（相对于输出 md 所在目录，默认 images）"},
+                },
+                "required": ["docx_path", "output_md"],
+            },
+        ),
     ]
 
 
@@ -64,6 +78,7 @@ async def handle_call_tool(name: str, arguments: dict | None) -> list[types.Text
         if name == "help_md":                return await _help_md()
         elif name == "example":              return await _example()
         elif name == "generate_hust_thesis": return await _gen(arguments)
+        elif name == "docx_to_md":           return await _d2m(arguments)
         else: raise ValueError(f"未知工具: {name}")
     except Exception as e:
         logger.exception(f"工具 {name} 失败")
@@ -134,6 +149,17 @@ async def _gen(args):
     r = generate_thesis(md, op, template_path=tp, bib_path=bp)
     return [types.TextContent(type="text",
             text=json.dumps({"success": True, "output_path": r, "message": f"论文已生成: {r}"}, ensure_ascii=False))]
+
+
+async def _d2m(args):
+    docx_path = args["docx_path"]
+    output_md = args["output_md"]
+    img_dir   = args.get("image_dir_name", "images")
+    if not os.path.exists(docx_path):
+        raise FileNotFoundError(f"文件不存在: {docx_path}")
+    r = docx_to_md(docx_path, output_md, image_dir_name=img_dir)
+    return [types.TextContent(type="text",
+            text=json.dumps({"success": True, "output_path": r, "message": f"转换完成: {r}"}, ensure_ascii=False))]
 
 
 # ═══════════════════ 入口 ═══════════════════
