@@ -44,12 +44,12 @@ async def handle_list_tools() -> list[types.Tool]:
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "md_content":    {"type": "string", "description": "扩展 Markdown 内容"},
+                    "md_path":      {"type": "string", "description": "扩展 Markdown 文件路径"},
                     "template_path": {"type": "string", "description": "模板 .docx 路径"},
                     "output_path":   {"type": "string", "description": "输出路径（可选）"},
                     "bib_path":      {"type": "string", "description": "BIB 文件路径（可选）"},
                 },
-                "required": ["md_content", "template_path"],
+                "required": ["md_path", "template_path"],
             },
         ),
         types.Tool(
@@ -138,9 +138,11 @@ async def _example():
 
 
 async def _gen(args):
-    md = args["md_content"]; tp = args["template_path"]
-    if not md: raise ValueError("md_content 为空")
+    mp = args["md_path"]; tp = args["template_path"]
+    if not mp or not os.path.exists(mp): raise FileNotFoundError(f"MD 文件不存在: {mp}")
     if not tp or not os.path.exists(tp): raise FileNotFoundError(f"模板不存在: {tp}")
+    with open(mp, "r", encoding="utf-8") as f:
+        md = f.read()
     op = args.get("output_path") or os.path.join(
         os.path.dirname(tp),
         f"{os.path.splitext(os.path.basename(tp))[0]}_thesis.docx")
