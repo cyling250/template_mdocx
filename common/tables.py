@@ -1,8 +1,29 @@
-"""表格处理：三线表 + 单元格样式 + 题注"""
+"""表格处理：三线表 + 单元格样式 + 题注 + 行内公式"""
+import re
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
-from .utils import set_para_style, apply_font, set_cell_border
+from .utils import set_para_style, apply_font, set_cell_border, add_omath_inline
 from .crossref import add_caption
+
+RE_INLINE = re.compile(r'(\*\*[^*]+\*\*|\*[^*]+\*|\$[^$]+\$)')
+
+
+def _fill_cell_paragraph(cp, text: str, font_cn="宋体", font_size=10.5, bold=False):
+    """填充单元格段落，支持 **粗体** *斜体* $行内公式$。"""
+    for seg in RE_INLINE.split(text):
+        if not seg:
+            continue
+        if seg.startswith("**") and seg.endswith("**"):
+            r = cp.add_run(seg[2:-2])
+            apply_font(r, bold=True, cn="黑体", sz=font_size)
+        elif seg.startswith("*") and seg.endswith("*"):
+            r = cp.add_run(seg[1:-1])
+            apply_font(r, italic=True, cn="楷体", sz=font_size)
+        elif seg.startswith("$") and seg.endswith("$"):
+            add_omath_inline(cp, seg[1:-1])
+        else:
+            r = cp.add_run(seg)
+            apply_font(r, cn=font_cn, sz=font_size, bold=bold)
 
 
 def make_three_line_table(doc, rows: list, cell_style_id: str,
@@ -39,14 +60,19 @@ def make_three_line_table(doc, rows: list, cell_style_id: str,
 
     for ri, rd in enumerate(rows):
         for ci in range(n):
-            c = tbl.cell(ri, ci); c.text = ""
+            c = tbl.cell(ri, ci)
+            c.text = ""
             cp = c.paragraphs[0]
             cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
             set_para_style(cp, cell_style_id)
-            run = cp.add_run(rd[ci] if ci < len(rd) else "")
-            apply_font(run, cn=header_font_cn if ri == 0 else body_font_cn,
-                       sz=font_size, bold=(ri == 0))
-            if ri == 0:
+
+            cell_text = rd[ci] if ci < len(rd) else ""
+            is_header = (ri == 0)
+            _fill_cell_paragraph(cp, cell_text,
+                                 font_cn=header_font_cn if is_header else body_font_cn,
+                                 font_size=font_size, bold=is_header)
+
+            if is_header:
                 set_cell_border(c, top={"sz": sz_t}, bottom={"sz": sz_m})
             elif ri == len(rows) - 1:
                 set_cell_border(c, bottom={"sz": sz_b})
