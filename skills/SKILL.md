@@ -1,131 +1,110 @@
 ---
 name: "template-mdocx"
-description: "Write Markdown, generate formatted Word documents via the template_mdocx MCP server. Invoke when user needs to create or edit academic papers, theses, reports, or any formatted Word document from Markdown content. MCP server located at E:\\mcp-server\\template_mdocx."
+description: "使用 template_mdocx MCP 服务将扩展 Markdown 转换为格式完整的 Word 文档，或将已有 .docx 转换回 Markdown。适用于学术论文、报告、计算书等场景。"
 ---
 
-# Template MDocx — Markdown to Word Document Generator
+# Template MDocx — Markdown 转 Word 文档工具
 
-This skill uses the **template_mdocx** MCP server to convert extended Markdown into formatted Word documents (`.docx`), or convert existing `.docx` files back to Markdown.
+本 skill 通过 **template_mdocx** MCP 服务，将扩展 Markdown 生成为格式完整的 Word 文档。
 
-## MCP Tools
+## MCP 工具
 
-| Tool                                      | Description                                             |
-| ----------------------------------------- | ------------------------------------------------------- |
-| `mcp_template_mdocx_help_md`              | Get the full extended Markdown syntax reference         |
-| `mcp_template_mdocx_example`              | Get example `.bib` and Markdown content                 |
-| `mcp_template_mdocx_generate_hust_thesis` | Generate Word document from Markdown + template `.docx` |
-| `mcp_template_mdocx_docx_to_md`           | Convert `.docx` back to Markdown                        |
+| 工具 | 说明 |
+|------|------|
+| `mcp_template_mdocx_help_md` | 获取完整的扩展 Markdown 语法参考 |
+| `mcp_template_mdocx_example` | 获取示例 `.bib` 和 Markdown 内容 |
+| `mcp_template_mdocx_generate_hust_thesis` | 根据 Markdown + 模板生成 Word 文档 |
+| `mcp_template_mdocx_docx_to_md` | 将 `.docx` 转换回 Markdown |
 
-### Tool Parameters
+### 工具参数
 
-**generate_hust_thesis:**
-- `md_path` (required) — Path to the extended Markdown file
-- `template_path` (required) — Path to the template `.docx` file
-- `output_path` (optional) — Output `.docx` path
-- `bib_path` (optional) — Path to `.bib` bibliography file
+**generate_hust_thesis（生成文档）：**
+- `md_path`（必填）— 扩展 Markdown 文件路径
+- `template_path`（必填）— 模板 `.docx` 文件路径
+- `output_path`（可选）— 输出 `.docx` 路径
+- `bib_path`（可选）— `.bib` 参考文献文件路径
 
-**docx_to_md:**
+**docx_to_md（转换文档）：**
+- `docx_path`（必填）— 输入 `.docx` 文件路径
+- `output_md`（必填）— 输出 `.md` 文件路径
+- `image_dir_name`（可选）— 图片目录名（默认 `images`）
 
-- `docx_path` (required) — Input `.docx` file path
-- `output_md` (required) — Output `.md` file path
-- `image_dir_name` (optional) — Image directory name (default: `images`)
+## 标题规则
 
-## Extended Markdown Syntax
+不同模板的标题规则见对应文件：
 
-### Headings
+| 模板 | 标题规则文件 |
+|------|-------------|
+| `hust_thesis` | `hust_thesis/TITLE_RULES.md`（MCP 项目内路径） |
 
-```
-# 一级标题（第 X 章）
-## 二级标题
-### 三级标题
-#### 四级标题
-```
+## 扩展 Markdown 语法
 
-### Inline Formatting
-
+### 行内格式
 ```
 **粗体** *斜体* $行内公式$
 ```
 
-### Figures
-
+### 图片
 ```
 @figure[fig:标签]{图注描述}
 ![替代文字](图片路径.png)
 ```
-
 - `@figure` 必须紧接在 `![alt](path)` 之前
 - 标签前缀使用 `fig:`
 
-### Tables
-
+### 表格
 ```
 @table[tbl:标签]{表名}
 | 列1 | 列2 | 列3 |
 | --- | --- | --- |
 | 内容 | 内容 | 内容 |
 ```
-
 - `@table` 必须紧接在 Markdown 表格之前
-- 标签前缀使用 `tbl:`
-- 生成三线表格式
+- 标签前缀使用 `tbl:`，生成三线表格式
 
-### Block Formulas
-
+### 块公式
 ```
 @formula[eq:标签]
 $$
-\mathcal{L} = \frac{1}{N} \sum (y - \hat{y})^2
+公式内容
 $$
 ```
-
 - `@formula` 必须紧接在 `$$...$$` 之前
-- 标签前缀使用 `eq:`
-- 公式自动编号
+- 标签前缀使用 `eq:`，公式自动编号
 
-### Cross-References
-
+### 交叉引用
 ```
 如 @ref{fig:架构图} 所示……结果见 @ref{tbl:对比}……目标函数见 @ref{eq:损失函数}。
 ```
-
 - `@ref{标签}` 的标签必须与声明的标签一致
 
-### Citation References
-
+### 文献引用
 ```
 相关研究 @cite{resnet2016,transformer2017} 表明……
 ```
-
 - `@cite{key1,key2}` 的 key 必须存在于 `.bib` 文件中
-- 多个引用用逗号分隔
-- 生成 `[1-3,5]` 风格上标引用
+- 多个引用用逗号分隔，生成 `[1-3,5]` 风格上标引用
 
-### Bibliography
-
+### 参考文献列表
 ```
 @bibliography{refs.bib}
 ```
+- 放在文档末尾，采用 GB/T 7714 格式
 
-- 放在文档末尾
-- 引用列表采用 GB/T 7714 格式
-
-## Four Golden Rules
+## 四大规则
 
 1. **每个图/表必须有** `@figure[标签]{描述}` / `@table[标签]{表名}` 声明紧接在前
 2. **每个块公式必须有** `@formula[标签]` 声明紧接在 `$$...$$` 之前
 3. **`@ref{标签}` 的标签必须** 与声明的标签完全一致
 4. **`@cite{key}` 的 key 必须** 存在于 `.bib` 文件中
 
-## Tag Prefix Convention
+## 标签前缀约定
 
-- `fig:` — figures/images
-- `tbl:` — tables
-- `eq:` — formulas/equations
+- `fig:` — 图片
+- `tbl:` — 表格
+- `eq:` — 公式
 
-## Post-Generation Steps (in Word)
+## 生成后的操作（在 Word 中）
 
-After opening the generated `.docx` in Word:
-
-1. **Formula rendering**: Press `Alt+F11` → Insert → Module, paste the VBA macro and run `F5`
-2. **Refresh numbering**: `Ctrl+A` then `F9` to update all cross-references and numbering
+1. **公式渲染**：`Alt+F11` → 插入 → 模块，粘贴 VBA 宏并运行 `F5`
+2. **刷新编号**：`Ctrl+A` 然后 `F9`，更新所有交叉引用和编号

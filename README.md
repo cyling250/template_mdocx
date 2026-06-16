@@ -190,12 +190,11 @@ uv run build.py
 
 ### 标题
 
-```
-# 一级标题（第 X 章）
-## 二级标题
-### 三级标题
-#### 四级标题
-```
+各模板的标题规则见对应文件：
+
+| 模板 | 标题规则 |
+|------|----------|
+| `hust_thesis` | [hust_thesis/TITLE_RULES.md](hust_thesis/TITLE_RULES.md) |
 
 ### 粗体 / 斜体 / 行内公式
 
